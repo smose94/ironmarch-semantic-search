@@ -9,7 +9,8 @@ import vecs
 import psycopg2
 from insert_functions import connect_psycopg2
 
-conn_params = f"dbname='{st.secrets["dbname"]}' user='{st.secrets["user"]}' host='{st.secrets["host"]}' password='{st.secrets["password"]}'"
+db_secrets = st.secrets["database"]
+conn_params = f"dbname='{db_secrets['dbname']}' user='{db_secrets["user"]}' host='{db_secrets["host"]}' password='{db_secrets["password"]}'"
 
 
 # Function to get embedding from openai for search term
