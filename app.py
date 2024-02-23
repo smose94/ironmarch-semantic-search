@@ -8,7 +8,8 @@ import pandas as pd
 import vecs
 import psycopg2
 from insert_functions import connect_psycopg2
-conn_params = "dbname='postgres' user='postgres.noxicvyjsaxffcmfptjp' host='aws-0-eu-west-2.pooler.supabase.com' password='Ukkpekluk1!'"
+
+conn_params = f"dbname={st.secrets["dbname"]} user={st.secrets["user"]} host={st.secrets["host"]} password={st.secrets["password"]}"
 
 
 # Function to get embedding from openai for search term
@@ -122,7 +123,7 @@ if search_term:
     conn.close()
     st.markdown(f"##### 🔍 {num_results} results found")
         #Write to UI
-    st.dataframe(df)
+    st.dataframe(df,use_container_width=True)
 
 
 else:
