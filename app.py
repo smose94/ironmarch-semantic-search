@@ -29,20 +29,21 @@ def init_connection():
 supabase = init_connection()
 
 #Set title for page
-st.title("Ironmarch semantic search")
+st.title("Iron March Semantic Search")
 
 
 # OpenAI API Key (ensure to use your own key securely)
 openai.api_key = st.secrets["OPENAI_KEY"]
 
 # Add input box for search term
-search_term = st.text_input("Enter a search term: (e.g. facism)")
+search_term = st.text_input("Enter a search term: (e.g. fascism)")
 # Adding an information note to the sidebar
 # Use st.sidebar.markdown with HTML for styling
 # Additional section for a textbox 
 st.sidebar.header("Additional Information")
 st.sidebar.markdown("""
-Web app designed to search for Iron March posts using cosine similarity on OpenAI vector embeddings. Implemented using Supabase and Streamlit.
+Web app designed to search for Iron March posts using cosine similarity on OpenAI vector embeddings. Implemented using Supabase and Streamlit. 
+                    Uses a sample of the Iron March forum posts available from [Kaggle.](https://www.kaggle.com/datasets/gracchus/ironmarch)
                     """)
 
 # Additional section for GitHub link in the sidebar
@@ -54,7 +55,7 @@ st.sidebar.markdown("""
 st.sidebar.markdown(
     """
     <div style="background-color:lightblue; border-radius: 5px; padding: 10px; margin: 10px 0;">
-        <strong>Note:</strong> Returns posts with cosine similarity below 0.5.
+        <strong>Note:</strong> Returns posts with cosine similarity below 0.6.
     </div>
     """,
     unsafe_allow_html=True
@@ -91,17 +92,18 @@ if search_term:
     # Using the <=> operator for distance calculation between embeddings
     cursor.execute("""
     INSERT INTO cosine_distances (temp_id, vector_id, distance)
-    SELECT temp.id, vec.msg_id, temp.embedding <=> vec.ada_embedding
+    SELECT temp.id, vec.id, temp.embedding <=> vec.ada_embedding
     FROM temp_table temp
-    CROSS JOIN vector_embeddings vec;                           
+    CROSS JOIN openai_embedding vec;                           
     """)
 
     #Select distances below 0.5 similarity and return the distance and original post
     cursor.execute("""
-    SELECT cd.distance, ve.msg_post
+    SELECT cd.distance, ve.post, ve.author_id
     FROM cosine_distances cd
-    JOIN vector_embeddings ve ON cd.vector_id = ve.msg_id
-    WHERE cd.distance < 0.5;
+    JOIN openai_embedding ve ON cd.vector_id = ve.id
+    WHERE cd.distance < 0.6
+    ORDER BY cd.distance ASC;
     """)
 
     # Commit the changes
