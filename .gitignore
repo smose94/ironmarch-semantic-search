@@ -3,4 +3,3 @@ secrets.toml
 .streamlit/
 *.ipynb
 data/
-insert_functions.py
